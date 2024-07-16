@@ -52,7 +52,7 @@ class Board
 
     #adding pawns to the board
     (0...8).each do |index|
-      find_node([1, index]).assign_piece(Pawn.new([6,index], "white"))
+      find_node([6, index]).assign_piece(Pawn.new([6,index], "white"))
     end
 
     #adding bishops to the board
@@ -77,7 +77,7 @@ class Board
 
     #adding pawns to the board
     (0...8).each do |index|
-      find_node([6, index]).assign_piece(Pawn.new([1,index], "Black"))
+      find_node([1, index]).assign_piece(Pawn.new([1,index], "Black"))
     end
     #adding bishops to the board
     find_node([0, 2]).assign_piece(Bishop.new([0,2], "Black"))
@@ -90,11 +90,15 @@ class Board
     find_node([0, 4]).assign_piece(King.new([0,4], "Black"))
   end
 
-  def display_board
+  def start_game
     populate_board
+    display_board
+  end
+
+  def display_board
     #puts "  a b c d e f g h"
-    @board.each_with_index do |row, i|
-      print "#{8 - i} "
+    @board.reverse.each_with_index do |row, i|
+      print "#{8 - i} "  # Show row numbers from 8 to 1
       row.each do |cell|
         piece = cell.piece_held.nil? ? "🩦" : cell.piece_held.sign
         print "#{piece} "
@@ -102,5 +106,20 @@ class Board
       puts
     end
     puts "  a b c d e f g h"
+  end
+
+  def move (start_point, end_point)
+    p = find_node(start_point)
+    e = find_node(end_point)
+
+    if p.piece_held.possible_moves.include?(end_point)
+      e = p.piece_held
+      puts e.inspect
+      p = nil
+      puts p.inspect
+      display_board
+    else
+      p "invalid move"
+    end
   end
 end
