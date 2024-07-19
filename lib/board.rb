@@ -1,4 +1,5 @@
 require_relative './pieces'
+require_relative './knight_travails'
 
 class Token
   attr_reader :value, :piece_held
@@ -113,7 +114,7 @@ class Board
     e = find_node(end_point)
     piece = s.piece_held
 
-    if s.piece_held && s.piece_held.possible_moves.include?(end_point)
+    if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece)
       if piece.class.name == "Pawn"
         e.assign_piece(piece.class.new(end_point, piece.colour, true))
       else
@@ -125,5 +126,24 @@ class Board
     else
       p "Invalid move"
     end
+  end
+
+  def legal_move(start_point, end_poinnt, piece)
+    # using the methods in knights travails to see if the optimal path from one space to another, which only uses the available possible move, returns an array of how to move from current to target square and then checks if there is any pieces on those squares
+    # need to change it slightly so it allows take to take place
+    # that shouldn't be to difficult hopefully :)
+    b = Board_knight.new(piece.move_off)
+
+    moves = b.start_search(start_point, end_poinnt, piece.move_off)
+    x = moves.shift
+    while !moves.empty?
+      check = moves.shift
+
+      if find_node(check).piece_held
+        p find_node(check).piece_held
+        return nil
+      end
+    end
+    return true
   end
 end

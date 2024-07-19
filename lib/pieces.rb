@@ -12,10 +12,23 @@ class Pawn
 
   def sign
     if @colour == "white"
-      return "♟︎"
-    else
       return "♙"
+    else
+      return "♟︎"
     end
+  end
+
+  def move_off
+    if @has_moved == nil
+      x = [
+      [1, 0],[2, 0]
+      ]
+    else
+      x = [
+      [1, 0]
+      ]
+    end
+    x
   end
 
   def calculate_moves
@@ -23,15 +36,7 @@ class Pawn
     row, col = @current_possition
 
     # Possible pawn moves offsets
-    if @has_moved == nil
-      move_offsets = [
-      [1, 0],[2, 0]
-      ]
-    else
-      move_offsets = [
-      [1, 0]
-      ]
-    end
+    move_offsets = move_off
 
     # Calculate and filter valid moves
     move_offsets.each do |(dr, dc)|
@@ -42,7 +47,6 @@ class Pawn
     end
     possible_moves
   end
-
 end
 
 class Knight
@@ -61,17 +65,19 @@ class Knight
       return "♞"
     end
   end
-
+  def move_off
+    x = [
+      [-2, -1], [-2, 1], [2, -1], [2, 1],
+      [-1, -2], [-1, 2], [1, -2], [1, 2]
+    ]
+    x
+  end
   def calculate_moves
     possible_moves = []
     row, col = @current_possition
 
     # Possible knight moves offsets
-    move_offsets = [
-      [-2, -1], [-2, 1], [2, -1], [2, 1],
-      [-1, -2], [-1, 2], [1, -2], [1, 2]
-    ]
-
+    move_offsets = move_off
 
 
     # Calculate and filter valid moves
@@ -101,13 +107,16 @@ class Bishop
       return "♝"
     end
   end
-
+  def move_off
+    directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    directions
+  end
   def calculate_moves
     possible_moves = []
     row, col = @current_possition
 
     # Diagonal moves: top-left, top-right, bottom-left, bottom-right
-    directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    directions = move_off
 
     directions.each do |(dr, dc)|
       new_row, new_col = row + dr, col + dc
@@ -140,12 +149,17 @@ class Rook
     end
   end
 
+  def move_off
+    directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+    directions
+  end
+
   def calculate_moves
     possible_moves = []
     row, col = @current_possition
 
     # Horizontal and vertical directions
-    directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+    directions =move_off
 
     directions.each do |(dr, dc)|
       new_row, new_col = row + dr, col + dc
@@ -178,15 +192,20 @@ class Queen
     end
   end
 
+  def move_off
+    directions = [
+      [-1, 0], [1, 0], [0, -1], [0, 1],  # Rook-like moves
+      [-1, -1], [-1, 1], [1, -1], [1, 1]  # Bishop-like moves
+    ]
+    directions
+  end
+
   def calculate_moves
     possible_moves = []
     row, col = @current_possition
 
     # Queen moves: combines rook and bishop moves
-    directions = [
-      [-1, 0], [1, 0], [0, -1], [0, 1],  # Rook-like moves
-      [-1, -1], [-1, 1], [1, -1], [1, 1]  # Bishop-like moves
-    ]
+    directions = move_off
 
     directions.each do |(dr, dc)|
       new_row, new_col = row + dr, col + dc
@@ -220,16 +239,21 @@ class King
     end
   end
 
-  def calculate_moves
-    possible_moves = []
-    row, col = @current_possition
-
-    # King moves: one square in any direction
+  def move_off
     move_offsets = [
       [-1, -1], [-1, 0], [-1, 1],
       [0, -1],         [0, 1],
       [1, -1], [1, 0], [1, 1]
     ]
+    move_offsets
+  end
+
+  def calculate_moves
+    possible_moves = []
+    row, col = @current_possition
+
+    # King moves: one square in any direction
+    move_offsets = move_off
 
     move_offsets.each do |(dr, dc)|
       new_row, new_col = row + dr, col + dc
