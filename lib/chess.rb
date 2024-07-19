@@ -11,12 +11,13 @@ def grab(board)
     #grab(board)
   else
     start =[]
-    start << letters.index(coordinates[0][0])
     start << coordinates[0][1] - 1
+    start << letters.index(coordinates[0][0])
+
 
     finish =[]
-    finish << letters.index(coordinates[1][0])
     finish << coordinates[1][1] - 1
+    finish << letters.index(coordinates[1][0])
     board.move(start, finish)
   end
 end
@@ -31,8 +32,5 @@ end
 
 
 
-# fix correct square identification, and token fucntions to ensure everything correlates properly
-# pawns disapper once a move is made
-# cant get pieces to move
-#
-# probably some more just ant find them right now 
+
+# probably some more just ant find them right now

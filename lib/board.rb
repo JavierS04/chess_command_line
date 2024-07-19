@@ -109,17 +109,21 @@ class Board
   end
 
   def move (start_point, end_point)
-    p = find_node(start_point)
+    s = find_node(start_point)
     e = find_node(end_point)
+    piece = s.piece_held
 
-    if p.piece_held.possible_moves.include?(end_point)
-      e = p.piece_held
-      puts e.inspect
-      p = nil
-      puts p.inspect
+    if s.piece_held && s.piece_held.possible_moves.include?(end_point)
+      if piece.class.name == "Pawn"
+        e.assign_piece(piece.class.new(end_point, piece.colour, true))
+      else
+        e.assign_piece(piece.class.new(end_point, piece.colour))
+      end
+      @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
+
       display_board
     else
-      p "invalid move"
+      p "Invalid move"
     end
   end
 end

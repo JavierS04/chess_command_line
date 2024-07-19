@@ -5,9 +5,9 @@ class Pawn
 
   def initialize (current, colour, moved = nil)
     @current_possition = current
+    @has_moved = moved
     @possible_moves = calculate_moves
     @colour = colour
-    @has_moved = moved
   end
 
   def sign
@@ -25,11 +25,11 @@ class Pawn
     # Possible pawn moves offsets
     if @has_moved == nil
       move_offsets = [
-      [0, 1],[0, 2]
+      [1, 0],[2, 0]
       ]
     else
       move_offsets = [
-      [0, 1]
+      [1, 0]
       ]
     end
 
@@ -128,7 +128,7 @@ class Rook
 
   def initialize (current, colour)
     @current_possition = current
-    @possible_moves = possible_moves
+    @possible_moves = calculate_moves
     @colour = colour
   end
 
