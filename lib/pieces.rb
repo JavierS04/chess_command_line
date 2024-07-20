@@ -6,12 +6,12 @@ class Pawn
   def initialize (current, colour, moved = nil)
     @current_possition = current
     @has_moved = moved
-    @possible_moves = calculate_moves
     @colour = colour
+    @possible_moves = calculate_moves
   end
 
   def sign
-    if @colour == "white"
+    if @colour != "white"
       return "♙"
     else
       return "♟︎"
@@ -19,14 +19,28 @@ class Pawn
   end
 
   def move_off
-    if @has_moved == nil
-      x = [
-      [1, 0],[2, 0]
-      ]
-    else
-      x = [
-      [1, 0]
-      ]
+    if @colour == "white"
+        if @has_moved == nil
+          x = [
+          [1, 0],[2, 0]
+          ]
+        else
+          x = [
+          [1, 0]
+          ]
+        end
+    end
+
+    if @colour == "Black"
+      if @has_moved == nil
+        x = [
+        [-1, 0],[-2, 0]
+        ]
+      else
+        x = [
+        [-1, 0]
+        ]
+      end
     end
     x
   end
@@ -60,9 +74,9 @@ class Knight
 
   def sign
     if @colour == "white"
-      return "♘"
-    else
       return "♞"
+    else
+      return "♘"
     end
   end
   def move_off
@@ -101,7 +115,7 @@ class Bishop
   end
 
   def sign
-    if @colour == "white"
+    if @colour != "white"
       return "♗"
     else
       return "♝"
@@ -142,7 +156,7 @@ class Rook
   end
 
   def sign
-    if @colour == "white"
+    if @colour != "white"
       return "♖"
     else
       return "♜"
@@ -185,7 +199,7 @@ class Queen
   end
 
   def sign
-    if @colour == "white"
+    if @colour != "white"
       return "♕"
     else
       return "♛"
@@ -232,7 +246,7 @@ class King
   end
 
   def sign
-    if @colour == "white"
+    if @colour != "white"
       return "♔"
     else
       return "♚"

@@ -109,10 +109,12 @@ class Board
     puts "  a b c d e f g h"
   end
 
-  def move (start_point, end_point)
+  def move (start_point, end_point, turn)
     s = find_node(start_point)
     e = find_node(end_point)
     piece = s.piece_held
+    p piece
+
 
     if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece)
       if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour
@@ -130,8 +132,10 @@ class Board
       display_board
       p "Pieces taken so far"
       puts "#{@@pieces_taken.join(' ')}"
+      return true
     else
       p "Invalid move"
+      return nil
     end
   end
 
@@ -157,8 +161,4 @@ end
 
 
 # need to add alternating rounds so white then black then white and so fourth
-
-
-
-
 # need to add check and chekmate for the program

@@ -1,6 +1,6 @@
 require_relative './board'
 
-def grab(board)
+def grab(board, turn)
   puts "Enter your coordinates (e.g., 'a2 a3'):"
   input = gets.strip
   coordinates = input.split.map { |coord| [coord[0], coord[1].to_i] }
@@ -18,20 +18,25 @@ def grab(board)
     finish =[]
     finish << coordinates[1][1] - 1
     finish << letters.index(coordinates[1][0])
-    board.move(start, finish)
+    board.move(start, finish, turn)
   end
 end
 
+def whos_turn(turn, board)
+  if turn % 2 == 0
+    grab(board, "white")
+  else
+    grab(board, "Black")
+  end
+end
 
 b = Board.new()
 b.start_game
+counter = 1
 
 while true
-  grab(b)
-
+  if whos_turn(counter, b) == nil
+    whos_turn(counter, b)
+  end
+  counter += 1
 end
-
-
-
-
-
