@@ -113,21 +113,33 @@ class Board
     s = find_node(start_point)
     e = find_node(end_point)
     piece = s.piece_held
-    p piece
 
+    if !e.piece_held.nil? && s.piece_held.colour == e.piece_held.colour
+      p "Invalid move"
+      return nil
+    end
 
-    if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece)
-      if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour
-        piece_sign = e.piece_held.sign.gsub(/["]/, '')
-        @@pieces_taken << piece_sign
-      end
-
+    if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece) ||  pawn_take(start_point, end_point)
       if piece.class.name == "Pawn"
-        e.assign_piece(piece.class.new(end_point, piece.colour, true))
+        if pawn_blocked(start_point) != nil
+          if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour
+            piece_sign = e.piece_held.sign.gsub(/["]/, '')
+            @@pieces_taken << piece_sign
+          end
+          e.assign_piece(piece.class.new(end_point, piece.colour, true))
+          @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
+        else
+          p "Invalid move"
+          return nil
+        end
       else
+        if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour # move this section of if statement
+          piece_sign = e.piece_held.sign.gsub(/["]/, '')
+          @@pieces_taken << piece_sign
+        end
         e.assign_piece(piece.class.new(end_point, piece.colour))
+        @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
       end
-      @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
 
       display_board
       p "Pieces taken so far"
@@ -157,8 +169,38 @@ class Board
     end
     return true
   end
+
+  def pawn_blocked(start_point)
+    s = find_node(start_point)
+    piece = s.piece_held
+
+    if s.piece_held != nil && s.piece_held.colour == "Black"
+      #black pieces move down so it would be -1 on the index
+      infront = find_node([start_point[0]-1, start_point[1]])
+      if infront.piece_held.nil?
+        return true
+      end
+    else
+      infront = find_node([start_point[0]+1, start_point[1]])
+      if infront.piece_held.nil?
+        return true
+      end
+    end
+    return nil
+  end
+
+  def pawn_take(start_point, end_point)
+    s = find_node(start_point)
+    e = find_node(end_point)
+
+    if e.piece_held.nil?
+      return nil
+    end
+
+    return true
+  end
 end
 
-
-# need to add alternating rounds so white then black then white and so fourth
+# add alternating turns properly
 # need to add check and chekmate for the program
+# need to add task logic for pawns, hands down worst piece to code
