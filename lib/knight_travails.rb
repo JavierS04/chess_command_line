@@ -72,7 +72,6 @@ class Board_knight
           end
 
           node.get_pm.each do |possible|
-            p node
             queue << find_node(possible) unless queue.include?(possible)
           end
         end
@@ -95,7 +94,7 @@ class Board_knight
 
         correct_list = correct_list.reverse
         correct_list << end_point
-        return correct_list
+        correct_list
     end
 
     def start_search(start, end_point, piece)

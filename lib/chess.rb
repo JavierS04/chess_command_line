@@ -7,13 +7,12 @@ def grab(board, turn)
   letters = "abcdefgh"
 
   if letters.index(coordinates[0][0]) === nil || letters.index(coordinates[1][0]) === nil
-    p "invalid place selected"
-    #grab(board)
+    p "Invalid place selected"
+    return nil
   else
     start =[]
     start << coordinates[0][1] - 1
     start << letters.index(coordinates[0][0])
-
 
     finish =[]
     finish << coordinates[1][1] - 1
@@ -35,8 +34,12 @@ b.start_game
 counter = 1
 
 while true
-  if whos_turn(counter, b) == nil
-    whos_turn(counter, b)
-  end
+    while whos_turn(counter, b) == nil
+      whos_turn(counter, b)
+    end
+
   counter += 1
 end
+
+
+# need to add error handling for when inputted in the wrong format
