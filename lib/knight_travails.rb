@@ -67,6 +67,9 @@ class Board_knight
           if node == nil
           elsif node.value == end_point
             found = true
+          elsif node.get_pm.include?(end_point)
+            found = true
+            parents << node unless parents.include?(node)
           else
               parents << node unless parents.include?(node)
           end

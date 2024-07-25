@@ -67,7 +67,7 @@ class Board
     #adding pawns to the board
     (0...8).each do |index|
       find_node([6, index]).assign_piece(Pawn.new([6,index], "Black"))
-    end
+   end
 
     #adding bishops to the board
     find_node([7, 2]).assign_piece(Bishop.new([7,2], "Black"))
@@ -93,6 +93,7 @@ class Board
     (0...8).each do |index|
       find_node([1, index]).assign_piece(Pawn.new([1,index], "white"))
     end
+    
     #adding bishops to the board
     find_node([0, 2]).assign_piece(Bishop.new([0,2], "white"))
     find_node([0, 5]).assign_piece(Bishop.new([0,5], "white"))
@@ -163,8 +164,6 @@ class Board
           end
           e.assign_piece(piece.class.new(end_point, piece.colour, true))
           @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
-          is_in_check = check == true ?  "king is in check" : ""
-          puts is_in_check
         else
           p "Invalid move, pawn blocked"
           return nil
@@ -181,7 +180,11 @@ class Board
       display_board
       p "Pieces taken so far"
       puts "#{@@pieces_taken.join(' ')}"
+
       update_possible_moves
+      is_in_check = check != nil ?  "KING IS IN CHECK" : ""
+      puts is_in_check
+
       return true
     else
       p "Invalid move"
@@ -209,7 +212,7 @@ class Board
 
 
   def check
-    king_position = []
+    king_position = nil
     (0...8).each do |row|
       (0...8).each do |col|
         king_position = @board[row][col].piece_held if @board[row][col].piece_held.class.name == "King"
@@ -220,20 +223,57 @@ class Board
       (0...8).each do |col|
         piece = @board[row][col].piece_held
         if piece != nil && piece.colour != king_position.colour && piece.possible_moves.include?(king_position.current_possition)
-          return true
+          return piece
         end
       end
     end
+    return nil
+  end
+
+  def legal_move(start_point, end_poinnt, piece, piece_to_check)
+    b = Board_knight.new(piece.move_off)
+    moves = b.start_search(start_point, end_poinnt, piece.move_off)
+
+    while !moves.empty?
+      move_check = moves.shift
+      if piece_to_check != nil && piece_to_check.possible_moves.include?(move_check)
+        return true
+      end
+    end
+    return nil
   end
 
 
+  def checkmate_check
+    king_position = []
+    (0...8).each do |row|
+      (0...8).each do |col|
+        king_position = @board[row][col].piece_held if @board[row][col].piece_held.class.name == "King"
+      end
+    end
+
+    (0...8).each do |row|
+      (0...8).each do |col|
+        piece = @board[row][col].piece_held if @board[row][col].piece_held != nil && @board[row][col].piece_held.colour == king_position.colour && @board[row][col].piece_held.class.name != "King"
+
+        if check && legal_move(check.current_possition,king_position.current_possition,check,piece) == true
+          return nil
+        end
+      end
+    end
+
+    if check != nil && king_position.position_in_check(@board).nil?
+      colour = king_position.colour == "white" ? "white" : "black"
+      p "King is in checkmate, #{colour} has won"
+      return true
+    end
+
+    return nil
+  end
 end
 
-# need to add check need to add the rules that come with check
-# if king is in check dont let any move be made unless it stops him from bheing in check
-# dont let king move to any squares where he will be in check
 
 
-# add chekmate for the program need to fiish game if kings in checkmate
+# add chekmate for the program need to finsh game if kings in checkmate
 
 # need to add task logic for pawns, need to put in fucntion of chnaging pieces when hitting opposite sides "base"

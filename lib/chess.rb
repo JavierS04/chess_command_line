@@ -20,11 +20,7 @@ def grab(board, turn)
 end
 
 def perform_turn(turn, board)
-  if turn % 2 == 0
-    grab(board, "Black")
-  else
-    grab(board, "white")
-  end
+  grab(board, turn)
 end
 
 def validate_coordinates(input)
@@ -70,7 +66,7 @@ b.start_game
 counter = 1
 
 loop do
-  current_player = counter.even? ? "Black" : "White"
+  current_player = counter.even? ? "Black" : "white"
 
   result = perform_turn(current_player, b)
 
@@ -82,6 +78,10 @@ loop do
     counter += 1
   end
 
+  if b.checkmate_check == true
+    p "Good Game"
+    break
+  end
   # Optional: Add a break condition for exiting the loop, e.g., game over condition
   # break if game_over?
 end

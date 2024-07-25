@@ -198,7 +198,7 @@ class Bishop
 
         if board[new_row][new_col].piece_held.nil?
           valid_moves << [new_row, new_col]
-        elsif board[new_row][new_col].piece_held && board[new_row][new_col].piece_held.colour != @colour
+        elsif board[new_row][new_col].piece_held
           valid_moves << [new_row, new_col]
           break
         else
@@ -206,7 +206,6 @@ class Bishop
         end
       end
     end
-
     valid_moves
   end
 end
@@ -379,10 +378,11 @@ class King
     row, col = @current_possition
 
     # King moves: one square in any direction
-    move_offsets = move_off
+    directions = move_off
 
-    move_offsets.each do |(dr, dc)|
+    directions.each do |(dr, dc)|
       new_row, new_col = row + dr, col + dc
+
       if new_row.between?(0, 7) && new_col.between?(0, 7)
         possible_moves << [new_row, new_col]
       end
@@ -391,7 +391,7 @@ class King
   end
 
   def valid_moves(board)
-    valid_moves = []
+    @possible_moves = []
     directions = [
       [-1, -1], [-1, 0], [-1, 1],
       [0, -1],         [0, 1],
@@ -399,21 +399,33 @@ class King
     ]
 
     directions.each do |dr, dc|
-      (1..7).each do |i|
-        new_row, new_col = @current_possition[0] + i * dr, @current_possition[1] + i * dc
-        break unless new_row.between?(0, 7) && new_col.between?(0, 7)
+      new_row, new_col = @current_possition[0] + dr, @current_possition[1] + dc
+      if new_row.between?(0, 7) && new_col.between?(0, 7)
+        if board[new_row][new_col].nil? || board[new_row][new_col].piece_held.nil?
+          @possible_moves << [new_row, new_col]
+        elsif board[new_row][new_col].piece_held.colour != @colour
+          @possible_moves << [new_row, new_col]
+        end
+      end
+    end
+    position_in_check(board)
+  end
 
-        if board[new_row][new_col].piece_held.nil?
-          valid_moves << [new_row, new_col]
-        elsif board[new_row][new_col].piece_held && board[new_row][new_col].piece_held.colour != @colour
-          valid_moves << [new_row, new_col]
-          break
-        else
-          break
+  def position_in_check(board)
+      (0...8).each do |row|
+        (0...8).each do |col|
+          @possible_moves.each do |move|
+          piece = board[row][col].piece_held
+          if piece && piece.possible_moves != nil &&piece.possible_moves.include?(move) && piece.colour != @colour
+            @possible_moves.delete(move)
+          end
         end
       end
     end
 
-    valid_moves
+    if @possible_moves.empty? == true
+      return nil
+    end
+    @possible_moves
   end
 end
