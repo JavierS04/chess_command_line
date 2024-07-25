@@ -22,7 +22,7 @@ class Pawn
     if @colour == "white"
         if @has_moved == nil
           x = [
-          [1, 0],[2, 0]
+          [1, 0],[5, 0]
           ]
         else
           x = [

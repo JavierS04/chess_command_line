@@ -114,24 +114,33 @@ class Board
     e = find_node(end_point)
     piece = s.piece_held
 
-    if !e.piece_held.nil? && s.piece_held.colour == e.piece_held.colour
-      p "Invalid move"
+    if s.piece_held.colour != turn
+      p "Invalid move, its #{turn} turn to move"
       return nil
     end
 
-    if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece) ||  pawn_take(start_point, end_point)
+    if !e.piece_held.nil? && s.piece_held.colour == e.piece_held.colour
+      p "Invalid move, pieces are of the same colour"
+      return nil
+    end
+
+    if s.piece_held && s.piece_held.possible_moves.include?(end_point) && legal_move(start_point, end_point, piece) || pawn_take(start_point, end_point)
       if piece.class.name == "Pawn"
-        if pawn_blocked(start_point) != nil
+        if pawn_blocked(start_point) != nil || pawn_take(start_point, end_point)
           if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour
             piece_sign = e.piece_held.sign.gsub(/["]/, '')
             @@pieces_taken << piece_sign
           end
           e.assign_piece(piece.class.new(end_point, piece.colour, true))
+          pawn_take(start_point, end_point)
           @board[start_point[0]][start_point[1]] = Token.new([start_point[0], start_point[1]])
+          is_in_check = check(end_point) == true ?  "king is in check" : ""
+          puts is_in_check
         else
-          p "Invalid move"
+          p "Invalid move, pawn blocked"
           return nil
         end
+
       else
         if e.piece_held != nil && e.piece_held.colour != s.piece_held.colour # move this section of if statement
           piece_sign = e.piece_held.sign.gsub(/["]/, '')
@@ -155,6 +164,10 @@ class Board
     # using the methods in knights travails to see if the optimal path from one space to another, which only uses the available possible move, returns an array of how to move from current to target square and then checks if there is any pieces on those squares
     # need to change it slightly so it allows take to take place
     # that shouldn't be to difficult hopefully :)
+    #
+    if piece.class.name == "Pawn"
+      return true
+    end
     b = Board_knight.new(piece.move_off)
 
     moves = b.start_search(start_point, end_poinnt, piece.move_off)
@@ -191,16 +204,44 @@ class Board
 
   def pawn_take(start_point, end_point)
     s = find_node(start_point)
-    e = find_node(end_point)
+    j = nil
+    if s.piece_held.class.name == "Pawn"
+      piece = find_node([end_point[0]+1,end_point[1]+1]).piece_held if find_node([end_point[0]+1,end_point[1]+1]) != nil
+      if piece != nil && piece.colour != s.piece_held.colour
+        @board[end_point[0]][end_point[1]].piece_held.possible_moves << [end_point[0]+1,end_point[1]+1] if end_point[1] + 1 < 8 && end_point[0]+1 < 8
+        j = true
+      end
 
-    if e.piece_held.nil?
-      return nil
+      piece = find_node([end_point[0]+1,end_point[1]-1]).piece_held if find_node([end_point[0]+1,end_point[1]-1]) != nil
+      if piece != nil && piece.colour != s.piece_held.colour
+        @board[end_point[0]][end_point[1]].piece_held.possible_moves << [end_point[0]+1,end_point[1]-1] if end_point[1] - 1 >= 0 && end_point[0]+1 < 8
+        j = true
+      end
+    end
+    return j
+  end
+
+  def check(end_point)
+    king_position = []
+    (0...8).each do |row|
+      (0...8).each do |col|
+        king_position = @board[row][col].piece_held.current_possition if @board[row][col].piece_held.class.name == "King"
+      end
     end
 
-    return true
+    (0...8).each do |row|
+      (0...8).each do |col|
+        piece = @board[row][col].piece_held
+        if piece != nil && piece.possible_moves.include?(king_position)
+          p piece
+          return true
+        end
+      end
+    end
   end
 end
 
-# add alternating turns properly
-# need to add check and chekmate for the program
-# need to add task logic for pawns, hands down worst piece to code
+# need to add check need to add the rules that come with check
+# add chekmate for the program need to fiish game if kings in checkmate
+
+# need to add task logic for pawns, need to put in fucntion of chnaging pieces when hitting opposite sides "base"

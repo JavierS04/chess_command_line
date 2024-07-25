@@ -24,9 +24,9 @@ end
 
 def whos_turn(turn, board)
   if turn % 2 == 0
-    grab(board, "white")
-  else
     grab(board, "Black")
+  else
+    grab(board, "white")
   end
 end
 

@@ -72,6 +72,7 @@ class Board_knight
           end
 
           node.get_pm.each do |possible|
+            p node
             queue << find_node(possible) unless queue.include?(possible)
           end
         end
